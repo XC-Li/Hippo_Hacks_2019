@@ -1,5 +1,6 @@
 import googlemaps
-import time
+import datetime as dt
+from datetime import datetime
 
 
 class GoogleApi(object):
@@ -12,11 +13,21 @@ class GoogleApi(object):
             api_key = 'AIzaSyBZHyideq3LOHmk6BScSLA_wIChiVFS8k8'
         self.google_map = googlemaps.Client(key=api_key)
 
+    # @staticmethod
+    # def transform_time(string):
+    #     t = time.strptime(string, '%b %d %Y %I:%M%p')
+    #     tt = int(time.mktime(t))
+    #     return tt
     @staticmethod
-    def transform_time(string):
-        t = time.strptime(string, '%b %d %Y %I:%M%p')
-        tt = int(time.mktime(t))
-        return tt
+    def transform_time(combined_time):
+        if not isinstance(combined_time, datetime):  # input is not a datetime object
+            if len(combined_time.split('-')) != 5:
+                raise ValueError('Wrong time format, should be year-month-day-hour-minute')
+            year, month, day, hour, minute = combined_time.split('-')
+            timestamp = dt.datetime(int(year), int(month), int(day), int(hour), int(minute)).timestamp()
+        else:  # input is a datetime object
+            timestamp = combined_time.timestamp()
+        return int(timestamp)
 
     def travel(self, origin, destination, mode, departure_time=None):
         """
