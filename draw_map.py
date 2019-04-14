@@ -1,3 +1,5 @@
+import webbrowser
+
 def list_to_dict(lat_lng):
     l = list()
     for i in lat_lng:
@@ -70,6 +72,9 @@ def draw_map(geo_list):
     middle = list_to_dict(geo_list)
     with open("map.html", "w") as text_file:
         text_file.write(before + middle + after)
+
+    webbrowser.open('map.html')
+
 
 if __name__ == '__main__':
     draw_map([[37.772,-122.214],

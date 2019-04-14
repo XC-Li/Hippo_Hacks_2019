@@ -1,11 +1,13 @@
 import requests
 import pandas as pd
+from google_api import GeoCodingApi
 headers = {'api_key': '5d7494bbde0c411981d3832703734b09'}
 
 
 class FindNearestBikeLocation(object):
     def __init__(self):
         self.df = self.get_bus_location()
+        self.gc = GeoCodingApi()
 
     def get_bus_location(self):
         """
@@ -33,14 +35,18 @@ class FindNearestBikeLocation(object):
 
     def find_neareast_bike_station(self, depart, dest):
         '''
-        Args:   depart --> (latitude,longitude)
-                dest --> (latitude,longitude)
+        Args:   depart --> (latitude,longitude) or string
+                dest --> (latitude,longitude) or string
 
         Return: depart_bike_station --> (latitude,longitude)
                 dest_bike_station --> (latitude,longitude)
                 info_depart --> (station_id of the bike station, name of the bike station)
                 info_dest --> (station_id of the destination bike station, name of the destination bike station)
         '''
+        if isinstance(depart, str) or isinstance(dest, str):  # if the input is address string, do the transformation
+            depart = self.gc.geo_coding(depart)
+            dest = self.gc.geo_coding(dest)
+
         df = self.df
         min_depart_dist = 10 ** 9
         coordinate_depart = []

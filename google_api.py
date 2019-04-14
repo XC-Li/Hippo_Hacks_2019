@@ -75,6 +75,19 @@ class GoogleApi(object):
         return result
 
 
+class GeoCodingApi(object):
+    def __init__(self, api_key=None):
+        if api_key is None:
+            api_key = 'AIzaSyDSkW7oEvbHsktIjsxCLfqaXhT6D0pSx9w'
+        self.google_map = googlemaps.Client(key=api_key)
+
+    def geo_coding(self, address):
+        geocode = self.google_map.geocode(address)
+        lat = geocode[0]['geometry']['location']['lat']
+        lng = geocode[0]['geometry']['location']['lng']
+        return (lat, lng)
+
+
 if __name__ == '__main__':
     g = GoogleApi()
     g.transit(origin='1900 South Eads Street, Arlington, VA',

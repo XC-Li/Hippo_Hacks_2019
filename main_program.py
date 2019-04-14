@@ -1,24 +1,45 @@
 import comparison
-import google_api
-import find_nearest_bike_location
 import draw_map
-def main_function():
-    g = google_api.GoogleApi()
-    f = find_nearest_bike_location.FindNearestBikeLocation()
-    origin='1900 South Eads Street, Arlington, VA'
-    destination='AMC Georgetown 14, 3111 K St NW, Washington, DC 20007'
-    departure_time='Apr 13 2019 09:30AM'
-    depart, dest = [38.885300, -77.050000], [38.857766, -77.059580]
-    # depart = '1900 South Eads Street, Arlington, VA'
-    # dest = 'AMC Georgetown 14, 3111 K St NW, Washington, DC 20007'
-    result = comparison.comparison(depart, dest, '2019-04-13-09-30')
+from datetime import datetime as dt
 
-    # google_route = g.travel(origin=origin,destination=destination,
-    #                         mode='transit',departure_time=departure_time)
-    x = []
+
+def get_current_time():
+    now = dt.now()
+    year = str(now.year)
+    month = str(now.month)
+    day = str(now.day)
+    hour = str(now.hour)
+    minute = str(now.minute)
+    return '-'.join([year, month, day, hour, minute])
+
+def transform_output(result ,key):
+    concated_list = []
     target_list = []
-    for i in result['only_bike'][:-1]:
-        x = x + i
-    for j in x[:-1]:
+    for i in result['use_google'][:-1]:
+        concated_list = concated_list + i
+    for j in concated_list:
         target_list.append(j[0])
+    return target_list
+
+
+def main_function(origin, destination, depart_time=None):
+    if depart_time is None:
+        depart_time = get_current_time()
+    result = comparison.comparison(origin, destination, depart_time)
+    if result['best'] == 1:
+        target_list = transform_output(result, 'only_bike')
+    elif result['best'] == 2:
+        target_list = transform_output(result, 'use_google')
+    else:
+        target_list = transform_output(result, 'bike_metro')
     draw_map.draw_map(target_list)
+
+
+if __name__ == '__main__':
+    origin = input('origin?>')
+    destination = input('Destination?>')
+    depart_time = input('Deaprt Time?(Leave blank for now>')
+    if len(depart_time) == 0:
+        depart_time = get_current_time()
+    main_function(origin, destination, depart_time)
+    # main_function('1600 S.Joyce St, Arlington, VA', 'AMC Georgetown 14, 3111 K St NW, Washington, DC 20007')
