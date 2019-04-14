@@ -1,7 +1,7 @@
 # Find the optimum combination of transit and shared-bike
 Project for Hippo Hacks 2019 @ GWU  
 Apr.2019
-
+![](./image/sample_use.png)
 ## Usage
 Environment: 
 - Google Map API Credential: [Link](https://developers.google.com/maps/documentation/)
